@@ -43,7 +43,7 @@ userschema = mongoose.Schema({
 
   nationalId: {
     type: String,
-    unique: true,
+    // unique: true,
   },
   age: {
     type: Number,
@@ -61,7 +61,7 @@ userschema = mongoose.Schema({
   role: {
     type: String,
     enum: {
-      values: ["vendor", "Admin", "student", "instructor"],
+      values: ["Admin", "student", "instructor"],
       message: "You entered not valid value",
     },
   },

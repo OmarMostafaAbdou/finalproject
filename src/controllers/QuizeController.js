@@ -43,19 +43,19 @@ async function getQuizById(id) {
   }
 }
 
-async function getAllCourseQuiz(course_ID) {
-  let quizes = await QuizeModel.find({ courseID: course_ID });
+// async function getAllCourseQuiz(course_ID) {
+//   let quizes = await QuizeModel.find({ courseID: course_ID });
 
-  try {
-    if (quizes) {
-      return quizes;
-    } else {
-      console.log("quizes not found");
-    }
-  } catch (error) {
-    console.log(error);
-  }
-}
+//   try {
+//     if (quizes) {
+//       return quizes;
+//     } else {
+//       console.log("quizes not found");
+//     }
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
 
 async function UpdateQuiz(id, QuizesData) {
   let quizes = await QuizeModel.updateOne({ _id: id }, QuizesData);
@@ -78,7 +78,7 @@ async function DeleteQuiz(id) {
 
 module.exports = {
   createQuize,
-  getAllCourseQuiz,
+
   getAllQuiz,
   getQuizById,
   DeleteQuiz,

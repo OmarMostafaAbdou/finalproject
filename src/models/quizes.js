@@ -8,15 +8,14 @@ let quizeSchema = mongoose.Schema({
     {
       questionText: { type: String, required: true },
       options: [{ type: String }],
-      correctOption: { type: Number },
+      correctOption: { type: String },
     },
   ],
-
-  courseID: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Course",
-  },
 });
+
+
+
+
 
 let Quizes = mongoose.model("Quiz", quizeSchema);
 module.exports = Quizes;

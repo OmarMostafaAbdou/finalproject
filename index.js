@@ -2,6 +2,10 @@ const express = require("express");
 const cors = require("cors");
 const connect = require("./conection");
 const userRoute = require("./src/routes/userRoute");
+const courseRoute = require("./src/routes/courseRoute");
+const lessionRoute = require("./src/routes/lessonRoute");
+const quizroute = require("./src/routes/QuizRoute");
+const categoryRoute = require("./src/routes/cateoryRoute");
 
 connect();
 
@@ -14,6 +18,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/user", userRoute);
+app.use("/course", courseRoute);
+app.use("/lesson", lessionRoute);
+app.use("/quiz", quizroute);
+app.use("/category", categoryRoute);
 
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);

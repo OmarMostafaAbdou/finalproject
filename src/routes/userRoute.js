@@ -90,7 +90,9 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.put("/update", verifyToken, async (req, res) => {
+router.put("/update/:id", verifyToken, async (req, res) => {
+  const hashedpassword = await bcrypt.hash(req.body.Password, 10);
+  req.body.Password = hashedpassword;
   jwt.verify(req.token, secret, async (err, data) => {
     if (err) {
       res.json({
@@ -100,9 +102,10 @@ router.put("/update", verifyToken, async (req, res) => {
         success: false,
       });
     } else {
-      let id = data.user._id;
-
-      let userdata = await usercontroller.update_user_data(id, data.user);
+      let userdata = await usercontroller.update_user_data(
+        req.params.id,
+        req.body
+      );
       try {
         if (userdata) {
           res.json({
@@ -137,6 +140,7 @@ router.get("/all", verifyToken, async (req, res) => {
       });
     } else {
       let userdata = await usercontroller.getAllClient();
+
       try {
         if (userdata) {
           res.json({
@@ -174,42 +178,7 @@ router.get("/:id", verifyToken, async (req, res) => {
       try {
         if (userdata) {
           res.json({
-            message: "successfull usergeten",
-            status: 200,
-            data: userdata,
-            success: true,
-          });
-        } else {
-          res.json({
-            message: "faild user found",
-            status: 401,
-            data: userdata,
-            success: false,
-          });
-        }
-      } catch (error) {
-        console.log(err);
-      }
-    }
-  });
-});
-router.get("/role/:role", verifyToken, async (req, res) => {
-  jwt.verify(req.token, secret, async (err, data) => {
-    if (err) {
-      res.json({
-        message: "Error:invalid credentials , on token found",
-        status: 401,
-        data: req.token,
-        success: false,
-      });
-    } else {
-      let userdata = await usercontroller.get_By_Role({
-        role: req.params.role,
-      });
-      try {
-        if (userdata) {
-          res.json({
-            message: "successfull usergeten",
+            message: "successfull user found",
             status: 200,
             data: userdata,
             success: true,
@@ -229,7 +198,121 @@ router.get("/role/:role", verifyToken, async (req, res) => {
   });
 });
 
-router.get("/delete/:id", verifyToken, async (req, res) => {
+router.post("/joinCourse/:id", verifyToken, async (req, res) => {
+  jwt.verify(req.token, secret, async (err, data) => {
+    if (err) {
+      res.json({
+        message: "Error:invalid credentials , on token found",
+        status: 401,
+        data: req.token,
+        success: false,
+      });
+    } else {
+      let course = await usercontroller.addUserCourse(
+        req.params.id,
+        req.body.CourseID
+      );
+      try {
+        if (course) {
+          res.json({
+            message: "user Course ADD successfully",
+            status: 200,
+            data: course,
+            success: true,
+          });
+        } else {
+          res.json({
+            message: "user Course ADD failed",
+            status: 400,
+            data: course,
+            success: false,
+          });
+        }
+      } catch (error) {
+        res.json({
+          message: "Expected error",
+          status: 500,
+          data: error,
+          success: false,
+        });
+      }
+    }
+  });
+});
+
+router.get("/userCourse/:id", verifyToken, async (req, res) => {
+  jwt.verify(req.token, secret, async (err, data) => {
+    if (err) {
+      res.json({
+        message: "Error:invalid credentials , on token found",
+        status: 401,
+        data: req.token,
+        success: false,
+      });
+    } else {
+      let course = await usercontroller.getUserCourse(req.params.id);
+      try {
+        if (course) {
+          res.json({
+            message: "user Courses",
+            status: 200,
+            data: course,
+            success: true,
+          });
+        } else {
+          res.json({
+            message: "user Course ADD failed",
+            status: 400,
+            data: course,
+            success: false,
+          });
+        }
+      } catch (error) {
+        res.json({
+          message: "Expected error",
+          status: 500,
+          data: error,
+          success: false,
+        });
+      }
+    }
+  });
+});
+router.get("/role/:Role", verifyToken, async (req, res) => {
+  jwt.verify(req.token, secret, async (err, data) => {
+    if (err) {
+      res.json({
+        message: "Error:invalid credentials , on token found",
+        status: 401,
+        data: req.token,
+        success: false,
+      });
+    } else {
+      let userdata = await usercontroller.get_By_Role(req.params.Role);
+      try {
+        if (userdata) {
+          res.json({
+            message: "successfull user found",
+            status: 200,
+            data: userdata,
+            success: true,
+          });
+        } else {
+          res.json({
+            message: "faild user found",
+            status: 401,
+            data: userdata,
+            success: false,
+          });
+        }
+      } catch (error) {
+        console.log(err);
+      }
+    }
+  });
+});
+
+router.delete("/delete/:id", verifyToken, async (req, res) => {
   jwt.verify(req.token, secret, async (err, data) => {
     if (err) {
       res.json({
@@ -243,7 +326,7 @@ router.get("/delete/:id", verifyToken, async (req, res) => {
       try {
         if (userdata) {
           res.json({
-            message: "successfull usergeten",
+            message: "deleted successfull ",
             status: 200,
             data: userdata,
             success: true,

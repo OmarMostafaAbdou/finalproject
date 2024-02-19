@@ -27,19 +27,19 @@ async function get_All_Lessions() {
     console.log(error);
   }
 }
-async function getCourselesson(course_ID) {
-  let Lesson = await LessonModel.find({ courseID: course_ID });
+// async function getCourselesson(course_ID) {
+//   let Lesson = await LessonModel.find({ courseID: course_ID });
 
-  try {
-    if (Lesson) {
-      return Lesson;
-    } else {
-      console.log("lession not found");
-    }
-  } catch (error) {
-    console.log(error);
-  }
-}
+//   try {
+//     if (Lesson) {
+//       return Lesson;
+//     } else {
+//       console.log("lession not found");
+//     }
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
 
 async function getlessonByid(id) {
   let Lesson = await LessonModel.find({ _id: id });
@@ -76,10 +76,8 @@ async function Deletelesson(id) {
 
 module.exports = {
   CreateLession,
-  getCourselesson,
   getlessonByid,
   get_All_Lessions,
   updateLesson,
   Deletelesson,
 };
-

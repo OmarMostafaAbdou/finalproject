@@ -1,24 +1,21 @@
 const mongoose = require("mongoose");
 let lessionsSchema = mongoose.Schema({
-  lessons: {
-    title: {
+  title: {
+    type: String,
+    required: true,
+  },
+  content: {
+    video: {
       type: String,
-      required: true,
     },
-    content: {
-      video: {
-        type: String,
-      },
-      document: {
-        type: String,
-      },
+    document: {
+      type: String,
     },
-    courseID: { type: Schema.Types.ObjectId, ref: "Course" },
+  },
 
-    duration: {
-      type: Number,
-      required: true,
-    },
+  duration: {
+    type: Number,
+    required: true,
   },
 });
 
