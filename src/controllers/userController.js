@@ -75,6 +75,16 @@ async function getUserCourse(userID) {
   }
 }
 
+async function getAllUserByPage(page, limit) {
+  const total = await Usermodel.countDocuments();
+  console.log(total);
+  let user = await Usermodel.find()
+    .skip((page - 1) * limit)
+    .limit(limit)
+    .exec();
+  return { total: total, user: user };
+}
+
 module.exports = {
   Register_new_user,
   getAllClient,
@@ -84,5 +94,6 @@ module.exports = {
   deleteuser,
   get_By_Role,
   addUserCourse,
+  getAllUserByPage,
   getUserCourse,
 };

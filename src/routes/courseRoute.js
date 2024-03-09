@@ -15,7 +15,8 @@ const storage = multer.diskStorage({
     console.log(path.join(__dirname, "..", "imgs"));
   },
   filename: (req, file, callback) => {
-    callback(null, file.originalname);
+    const timestamp = Date.now();
+    callback(null, timestamp + "_" + file.originalname);
   },
 });
 
@@ -26,8 +27,9 @@ router.post(
   Uploadeimage.single("imgURL"),
   verifyToken,
   async (req, res) => {
-    let imageurl = new Date() + req.file.filename;
+    let imageurl = req.file.filename;
     console.log(imageurl);
+
     req.body.imgURL = imageurl;
 
     jwt.verify(req.token, secret, async (err, data) => {
@@ -94,7 +96,7 @@ router.get(
               message: " courses Not found",
               status: 403,
               data: coursedata,
-              success: true,
+              success: false,
             });
           }
         } catch (error) {
@@ -104,9 +106,8 @@ router.get(
     });
   }
 );
-
-router.get(
-  "/title",
+router.post(
+  "/Enroll",
 
   verifyToken,
   async (req, res) => {
@@ -120,13 +121,67 @@ router.get(
         });
       } else {
         try {
-          const coursedata = await coursecontroller.getCourseTitles();
+          const coursedata = await coursecontroller.EnrollCourse(
+            req.body.userId,
+            req.body.courseId
+          );
           console.log(coursedata);
+          if (coursedata) {
+            res.json({
+              message: "Course Enrolled Success",
+              status: 200,
+              data: coursedata,
+              success: true,
+            });
+          } else {
+            res.json({
+              message: " courses Enrolled failed",
+              status: 403,
+              data: coursedata,
+              success: false,
+            });
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    });
+  }
+);
+router.get(
+  "/",
+
+  verifyToken,
+  async (req, res) => {
+    const limit = parseInt(req.query.limit);
+    const page = parseInt(req.query.page);
+    console.log(limit);
+    console.log(page);
+    jwt.verify(req.token, secret, async (err, data) => {
+      if (err) {
+        res.json({
+          message: "Error:invalid credentials , on token found",
+          status: 401,
+          data: req.token,
+          success: false,
+        });
+      } else {
+        try {
+          const coursedata = await coursecontroller.getAllCourseByPage(
+            page,
+            limit
+          );
+
           if (coursedata) {
             res.json({
               message: "All courses",
               status: 200,
-              data: coursedata,
+              data: {
+                Course: coursedata.course,
+                Total: coursedata.total,
+                page: page,
+                size: limit,
+              },
               success: true,
             });
           } else {
@@ -144,6 +199,41 @@ router.get(
     });
   }
 );
+
+router.get("/title", verifyToken, async (req, res) => {
+  jwt.verify(req.token, secret, async (err, data) => {
+    if (err) {
+      res.json({
+        message: "Error:invalid credentials , on token found",
+        status: 401,
+        data: req.token,
+        success: false,
+      });
+    } else {
+      try {
+        const coursedata = await coursecontroller.getCourseTitles();
+        console.log(coursedata);
+        if (coursedata) {
+          res.json({
+            message: "All courses",
+            status: 200,
+            data: coursedata,
+            success: true,
+          });
+        } else {
+          res.json({
+            message: " courses Not found",
+            status: 403,
+            data: coursedata,
+            success: true,
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  });
+});
 router.get("/:id", verifyToken, async (req, res) => {
   jwt.verify(req.token, secret, async (err, data) => {
     if (err) {
@@ -168,6 +258,51 @@ router.get("/:id", verifyToken, async (req, res) => {
             message: " course Not found",
             status: 403,
             data: course,
+            success: true,
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  });
+});
+router.get("/category/:id", verifyToken, async (req, res) => {
+  const page = req.query.page;
+  const limit = req.query.limit;
+
+  jwt.verify(req.token, secret, async (err, data) => {
+    if (err) {
+      res.json({
+        message: "Error:invalid credentials , on token found",
+        status: 401,
+        data: req.token,
+        success: false,
+      });
+    } else {
+      try {
+        let coursedata = await coursecontroller.getCoursesByCategory(
+          req.params.id,
+          page,
+          limit
+        );
+        if (coursedata) {
+          res.json({
+            message: "course data get successfully",
+            status: 200,
+            data: {
+              Course: coursedata.course,
+              Total: coursedata.total,
+              page: page,
+              size: limit,
+            },
+            success: true,
+          });
+        } else {
+          res.json({
+            message: " course Not found",
+            status: 403,
+            data: coursedata,
             success: true,
           });
         }
@@ -271,8 +406,6 @@ router.post("/addcomment/:id", verifyToken, async (req, res) => {
     }
   });
 });
-
-
 
 router.get("/comments/:id", verifyToken, async (req, res) => {
   jwt.verify(req.token, secret, async (err, data) => {

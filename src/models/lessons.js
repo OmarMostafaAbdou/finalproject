@@ -13,6 +13,13 @@ let lessionsSchema = mongoose.Schema({
     },
   },
 
+  CourseID: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Course",
+    },
+  ],
+
   duration: {
     type: Number,
     required: true,

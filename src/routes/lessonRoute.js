@@ -15,12 +15,13 @@ const storage = multer.diskStorage({
     console.log(path.join(__dirname, "..", "imgs"));
   },
   filename: (req, file, callback) => {
-    callback(null, file.originalname);
+    const timestamp = Date.now();
+    callback(null, timestamp + "_" + file.originalname);
   },
 });
 
 const Uploadevedio = multer({ storage: storage });
-const Uploadedoc = multer({ storage: storage });
+// const Uploadedoc = multer({ storage: storage });
 
 router.post(
   "/addlesson",
@@ -33,8 +34,8 @@ router.post(
     console.log(req.files["video"][0].filename);
 
     let content = {
-      video: new Date() + req.files["video"][0].filename,
-      document: new Date() + req.files["document"][0].filename,
+      video: req.files["video"][0].filename,
+      document: req.files["document"][0].filename,
     };
     let lesson = {
       title: req.body.title,
@@ -187,8 +188,8 @@ router.put(
   verifyToken,
   async (req, res) => {
     let content = {
-      video: new Date() + req.files["video"][0].filename,
-      document: new Date() + req.files["document"][0].filename,
+      video: req.files["video"][0].filename,
+      document: req.files["document"][0].filename,
     };
     let lesson = {
       title: req.body.title,

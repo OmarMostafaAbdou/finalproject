@@ -32,11 +32,19 @@ async function getCourseByid(id) {
 async function getCourseTitles() {
   let courseTitles = await CourseModel.find({}, "title");
   const Titles = courseTitles.map((course) => course.title);
-  // console.log(Titles);
 
   return courseTitles;
 }
 
+async function getAllCourseByPage(page, limit) {
+  const total = await CourseModel.countDocuments();
+  console.log(total);
+  let course = await CourseModel.find()
+    .skip((page - 1) * limit)
+    .limit(limit)
+    .exec();
+  return { total: total, course: course };
+}
 async function deleteCourse(id) {
   let course = await CourseModel.deleteOne({ _id: id });
   return course;
@@ -54,6 +62,22 @@ async function ubdateCourse(id, CourseData) {
   } catch (err) {
     console.log(err);
   }
+}
+
+async function EnrollCourse(userId, courseId) {
+  const course = await CourseModel.findById(courseId);
+  if (!course) {
+    return error;
+  }
+
+  await user.findByIdAndUpdate(userId, {
+    $push: { enrolledCourses: courseId },
+  });
+
+  course.enrolledStudents.push(userId);
+  await course.save();
+
+  return course;
 }
 
 async function getAllcourse() {
@@ -85,6 +109,24 @@ async function createComment(courseID, user_id, text) {
     console.log("course not found");
   }
 }
+
+async function getCoursesByCategory(categoryID, page, limit) {
+  try {
+    const courses = await CourseModel.find({ categoryID: categoryID })
+
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .exec();
+
+    const total = (await CourseModel.find({ categoryID: categoryID })).length;
+    console.log(total);
+    return { total: total, course: courses };
+  } catch (error) {
+    console.error("Error fetching courses by category ID:", error);
+    throw error;
+  }
+}
+
 async function getAllcomentForCourse(courseID) {
   const course = await CourseModel.findById(courseID);
 
@@ -104,4 +146,7 @@ module.exports = {
   createComment,
   getAllcomentForCourse,
   getCourseTitles,
+  getAllCourseByPage,
+  getCoursesByCategory,
+  EnrollCourse,
 };

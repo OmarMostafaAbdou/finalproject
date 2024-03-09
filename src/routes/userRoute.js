@@ -90,7 +90,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.put("/update/:id", verifyToken, async (req, res) => {
+router.patch("/update/:id", verifyToken, async (req, res) => {
   const hashedpassword = await bcrypt.hash(req.body.Password, 10);
   req.body.Password = hashedpassword;
   jwt.verify(req.token, secret, async (err, data) => {
@@ -163,7 +163,54 @@ router.get("/all", verifyToken, async (req, res) => {
     }
   });
 });
+router.get(
+  "/",
 
+  verifyToken,
+  async (req, res) => {
+    const limit = parseInt(req.query.limit);
+    const page = parseInt(req.query.page);
+    console.log(limit);
+    console.log(page);
+    jwt.verify(req.token, secret, async (err, data) => {
+      if (err) {
+        res.json({
+          message: "Error:invalid credentials , on token found",
+          status: 401,
+          data: req.token,
+          success: false,
+        });
+      } else {
+        try {
+          const user = await usercontroller.getAllUserByPage(page, limit);
+
+          if (user) {
+            res.json({
+              message: "All courses",
+              status: 200,
+              data: {
+                Course: user.user,
+                Total: user.total,
+                page: page,
+                size: limit,
+              },
+              success: true,
+            });
+          } else {
+            res.json({
+              message: " user Not found",
+              status: 403,
+              data: user,
+              success: true,
+            });
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    });
+  }
+);
 router.get("/:id", verifyToken, async (req, res) => {
   jwt.verify(req.token, secret, async (err, data) => {
     if (err) {

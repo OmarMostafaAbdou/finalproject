@@ -4,6 +4,9 @@ let quizeSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  lessons: [{ type: mongoose.Schema.Types.ObjectId, ref: "Lesson" }],
+
+  
   questions: [
     {
       questionText: { type: String, required: true },
@@ -11,6 +14,7 @@ let quizeSchema = mongoose.Schema({
       correctOption: { type: String },
     },
   ],
+
 });
 
 

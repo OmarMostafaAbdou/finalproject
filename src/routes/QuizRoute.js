@@ -10,16 +10,6 @@ const { verifyToken } = require("../shared/Auth");
 const secret = "ElearningProject";
 
 router.post("/addQuiz", verifyToken, async (req, res) => {
-  let quiz = {
-    title: req.body.title,
-    questions: [
-      {
-        questionText: req.body.questionText,
-        options: req.body.options,
-        correctOption: req.body.correctOption,
-      },
-    ],
-  };
   jwt.verify(req.token, secret, async (err, data) => {
     if (err) {
       res.json({
@@ -30,7 +20,7 @@ router.post("/addQuiz", verifyToken, async (req, res) => {
       });
     } else {
       try {
-        let QuizData = await quizController.createQuize(quiz);
+        let QuizData = await quizController.createQuize(req.body);
         if (QuizData) {
           res.json({
             message: "quiz added successfully",

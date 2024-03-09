@@ -21,9 +21,10 @@ const courseSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+
   level: {
     type: String,
-    enum: ["Beginner", "Intermediate", "Advanced"],
+    enum: ["Beginner", "Intermediate", "Advanced", "AllLevels"],
     required: true,
   },
   tags: [String],
@@ -46,6 +47,22 @@ const courseSchema = new mongoose.Schema({
       user: { type: mongoose.Schema.Types.ObjectId, ref: "Users" },
       text: { type: String },
       createdAt: { type: Date, default: Date.now },
+    },
+  ],
+  rate: {
+    type: Number,
+  },
+  price: {
+    type: Number,
+  },
+  discount: {
+    type: Number,
+  },
+
+  enrolledStudents: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Users",
     },
   ],
 });

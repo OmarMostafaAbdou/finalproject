@@ -43,7 +43,7 @@ userschema = mongoose.Schema({
 
   nationalId: {
     type: String,
-    // unique: true,
+    unique: true,
   },
   age: {
     type: Number,
@@ -65,12 +65,10 @@ userschema = mongoose.Schema({
       message: "You entered not valid value",
     },
   },
-  CourseID: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Course",
-    },
-  ],
+
+  enrolledCourses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }],
+
+  
 });
 
 const user = mongoose.model("Users", userschema);
